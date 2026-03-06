@@ -1,0 +1,349 @@
+
+
+# **DIP ASSIGNMENT - SCILAB PROGRAMS**
+
+## **INDEX**
+
+| Assignment Number | Date | Questions | Page Number |
+| --- | --- | --- | --- |
+| **DSE05P/01** | 20/06/24 | Read an image and resize it using SCILAB. | 1 
+
+ |
+| **DSE05P/02** | 20/06/24 | Read an image and rotate it in clockwise and anticlockwise direction. | 3 
+
+ |
+| **DSE05P/03** | 20/06/24 | Convert colour image to grey-scale and black & white. | 5 
+
+ |
+| **DSE05P/04** | 20/06/24 | Implement Negative, Thresholding, Contrast Stretching, and Gray-level Slicing. | 7 
+
+ |
+| **DSE05P/05** | 22/06/24 | Image arithmetic: Addition, Subtraction, and Mean value calculation. | 14 
+
+ |
+| **DSE05P/06** | 22/06/24 | Generate Histogram for an image. | 18 
+
+ |
+| **DSE05P/07** | 22/06/24 | Histogram Equalization of an image. | 20 
+
+ |
+| **DSE05P/08** | 22/06/24 | Smoothing (Lowpass) using linear filter in Spatial Domain. | 22 
+
+ |
+| **DSE05P/09** | 24/06/24 | Sharpening (Highpass) using linear filter in Spatial Domain. | 24 
+
+ |
+| **DSE05P/10** | 24/06/24 | Implement Salt & Pepper noise (using Median Filter). | 26 
+
+ |
+| **DSE05P/11** | 24/06/24 | Smoothing in Frequency Domain using Gaussian Filters. | 28 
+
+ |
+| **DSE05P/12** | 24/06/24 | Sharpening (Highpass) Frequency Domain Filters. | 30 
+
+ |
+
+---
+
+**Assignment No. 1: Image Resizing** 
+
+**Problem Statement:** Write a program to read an image and resize it using SCILAB. 
+
+**Algorithm** 
+
+1. Read the image file using `imread` and convert to grayscale if necessary. 
+
+
+2. Store the width ($m$) and height ($n$) of the image. 
+
+
+3. Get the scaling factor ($s$) from the user. 
+
+
+4. Calculate new dimensions: $nm = m \cdot s$ and $nn = n \cdot s$. 
+
+
+5. Resize the image using the `imresize` function with bicubic interpolation. 
+
+
+6. Display original and resized images using `imshow`. 
+
+
+
+**Code** 
+
+```scilab
+img = rgb2gray(imread('./assets/lena.jpg'));
+[m, n] = size(img);
+s = input('Input Scaling Constant: ');
+nm = (m * s);
+nn = (n * s);
+n_img = imresize(img, [nm, nn], 'bicubic');
+figure(0);
+subplot(1, 2, 1); title("Original"); imshow(img);
+subplot(1, 2, 2); title("Resized"); imshow(n_img);
+
+```
+
+
+
+---
+
+**Assignment No. 2: Image Rotation** 
+
+**Problem Statement:** Write a program to read an image and rotate it in clockwise and anticlockwise direction. 
+
+**Code** 
+
+```scilab
+img = rgb2gray(imread('./assets/lena.jpg'));
+clk_angle = input("Enter an angle in degrees (for clockwise): ");
+clk_img = imrotate(img, -clk_angle); 
+figure(0);
+subplot(2, 2, 1); title("Before Clockwise Rotation"); imshow(img);
+subplot(2, 2, 2); title("After Clockwise Rotation"); imshow(clk_img);
+
+anti_clk_angle = input("Enter an angle in degrees (for anticlockwise): ");
+anti_clk_img = imrotate(img, anti_clk_angle);
+subplot(2, 2, 3); title("Before Anticlockwise Rotation"); imshow(img);
+subplot(2, 2, 4); title("After Anticlockwise Rotation"); imshow(anti_clk_img);
+
+```
+
+
+
+---
+
+**Assignment No. 3: Color to Grayscale and Binary** 
+
+**Problem Statement:** Convert a given colour image into grayscale and then into black & white. 
+
+### **Algorithm Highlights**
+
+* 
+**Color to Gray:** Uses a linear combination of R, G, and B channels: $f(x,y) = 0.299 \cdot R + 0.587 \cdot G + 0.114 \cdot B$. 
+
+
+* 
+**Gray to Binary:** Uses thresholding to obtain a black and white image. 
+
+
+
+**Code** 
+
+```scilab
+img = imread("./assets/color_rose.jpg");
+figure(0);
+subplot(1, 3, 1); title("Color Image"); imshow(img);
+gray_img = rgb2gray(img);
+subplot(1, 3, 2); title("Gray Scale Image"); imshow(gray_img);
+bw_img = im2bw(gray_img, 0.3);
+subplot(1, 3, 3); title("Binary Image"); imshow(bw_img);
+
+```
+
+
+
+---
+
+**Assignment No. 4: Intensity Transformations** 
+
+**Problem Statement:** Implement Negative, Thresholding, Contrast Stretching, and Gray-level Slicing. 
+
+**Code Snippets** 
+
+* 
+**Negative Image:** `neg_img = 255 - img;` 
+
+
+* **Thresholding:**
+```scilab
+if(img(i, j) <= threshold)
+    bw_img(i, j) = 0;
+else
+    bw_img(i, j) = 255;
+
+```
+
+
+
+---
+
+## **Assignment No. 5: Image Arithmetic Operations**
+
+**Problem Statement:** Implement addition, subtraction, contrast manipulation by multiplication, and calculate the mean intensity of an image .
+
+### **Code**
+
+* **Addition:**
+```scilab
+img1 = uint8(double(imread("./assets/cameraman.tif")) * 0.6);
+img2 = uint8(double(rgb2gray(imread("./assets/rice.png"))) * 0.6);
+n_img = img1 + img2; // Superimposing images
+
+```
+
+
+
+
+
+* **Subtraction:**
+```scilab
+n_img = img2 - img1; // Removing features using a mask
+
+```
+
+
+
+
+
+* **Mean Intensity:**
+```scilab
+[m, n] = size(img);
+s = double(0);
+for i=1:m, for j=1:n, s = s + double(img(i, j)); end, end
+printf("Mean value of image: %f", (s / (m * n)));
+
+```
+
+
+
+
+
+
+---
+
+## **Assignment No. 6: Histogram Generation**
+
+**Problem Statement:** Write a program using SCILAB to generate unnormalized and normalized histograms for an image.
+
+### **Code**
+
+```scilab
+img = imread("./assets/beans.tif");
+[m, n] = size(img);
+for i = 0:255
+    freq_unnorm(i + 1) = length(find(img == i));
+end
+freq_norm = freq_unnorm / (m * n);
+plot2d3('gnn', [0:255], freq_unnorm); // Unnormalized
+plot2d3('gnn', [0:255], freq_norm);   // Normalized
+
+```
+
+
+
+---
+
+## **Assignment No. 7: Histogram Equalization**
+
+**Problem Statement:** Perform Histogram Equalization to automatically improve image contrast.
+
+### **Code**
+
+```scilab
+a = imread("./assets/beans.tif");
+b = imhistequal(a); // Equalize the image
+// Calculate histogram for equalized image
+for i = 0:255
+    h_freq(i + 1) = length(find(b == i));
+end
+equ_freq = double(h_freq) / (m * n);
+plot2d3('gnn', [0:255], equ_freq);
+
+```
+
+
+
+---
+
+## **Assignment No. 8: Smoothing in Spatial Domain**
+
+**Problem Statement:** Implement Lowpass Smoothing using linear filters (Box Blur).
+
+### **Code (Using 9x9 Mask)**
+
+```scilab
+a = double(imread('./assets/cameraman.tif'));
+w9 = 1/81 * ones(9, 9); // Create box blur kernel
+d = conv2(a, w9, 'same'); // Perform convolution
+imshow(uint8(d));
+
+```
+
+
+
+---
+
+## **Assignment No. 9: Sharpening in Spatial Domain**
+
+**Problem Statement:** Implement Highpass Sharpening using the Laplacian operator.
+
+### **Code**
+
+```scilab
+lap_kernel = [1, 1, 1; 1, -8, 1; 1, 1, 1]; // Laplacian mask
+lap_img = abs(conv2(double(blur_img), lap_kernel, "same") * -1);
+sharp_img = blur_img + lap_img;
+imshow(uint8(sharp_img));
+
+```
+
+
+
+---
+
+## **Assignment No. 10: Salt & Pepper Noise Removal**
+
+**Problem Statement:** Implement a Median Filter to remove impulsive noise.
+
+### **Code**
+
+```scilab
+noise_img = uint8(imnoise(img, "salt & pepper", 0.01));
+// 3x3 Neighborhood Median Calculation
+for i = 2:(pm-1)
+    for j = 2:(pn-1)
+        med_val = median([p(i-1,j-1), p(i-1,j), p(i-1,j+1), p(i,j-1), p(i,j), p(i,j+1), p(i+1,j-1), p(i+1,j), p(i+1,j+1)]);
+        denoise_img(i-1, j-1) = med_val;
+    end
+end
+
+```
+
+
+
+---
+
+## **Assignment No. 11 & 12: Frequency Domain Processing**
+
+**Problem Statement:** Implement Smoothing (GLPF) and Sharpening (GHPF) in the frequency domain.
+
+### **Code (Smoothing - GLPF)**
+
+```scilab
+ft_img = fftshift(fft2(double(img)));
+for u=1:m, for v=1:n
+    d = (u-cu)^2 + (v-cv)^2;
+    H(u,v) = exp(-d / (2 * d0 * d0)); // Gaussian Transfer Function
+end, end
+conv_ft = ft_img .* H;
+out_img = abs(ifft(conv_ft));
+
+```
+
+
+
+### **Code (Sharpening - GHPF)**
+
+```scilab
+H = 1.0 - H; // Invert Lowpass to get Highpass
+conv_ft = ft_img .* H;
+out_img = abs(ifft(conv_ft));
+
+```
+
+
+
+---
+
