@@ -1,0 +1,441 @@
+TABLE CREATION :-
+
+SQL> CREATE TABLE department69(dno number(3) primary key, dname varchar2(20), dloc varchar2(10));
+
+Table created.
+
+SQL> CREATE TABLE employee69 (ssn number(4), ename varchar2(20), dob date, sex varchar(1), sal number(6), dno number(3) references department69(dno) on delete cascade, primary key(ssn));
+
+Table created.
+
+
+SQL> CREATE TABLE manages69(dno number(3) references department69(dno) on delete cascade, ssn number(4) references employee69(ssn) on delete cascade, start_date date, primary key(start_date, ssn, dno));
+
+Table created.
+
+SQL> CREATE TABLE project69(pno number(3), pname varchar2(10), ploc varchar2(20), dno number(3) references department69(dno) on delete cascade, primary key(pno));
+
+Table created.
+
+SQL> CREATE TABLE workson69(ssn number(4) references employee69(ssn) on delete cascade, pno number(3) references project69(pno) on delete set NULL, hours number(3), primary key(ssn, pno));
+
+Table created.
+
+SQL> CREATE TABLE dependant69(ssn number(4) references employee69(ssn) on delete cascade, dep_name varchar2(20), rel varchar2(10), dob date, sex varchar(1), primary key(dep_name, ssn));
+
+
+
+TABLE INSERTION QUERIES :-
+
+INSERT INTO department69 VALUES(501, 'hr', 'mumbai');
+INSERT INTO department69 VALUES(502, 'sales', 'delhi');
+INSERT INTO department69 VALUES(503, 'customer support', 'kolkata');
+INSERT INTO department69 VALUES(504, 'accounts', 'jharkhand');
+INSERT INTO department69 VALUES(505, 'technical', 'chennai');
+
+INSERT INTO employee69 VALUES(101, 'smith', '10-DEC-1999', 'm', 31029, 501);
+INSERT INTO employee69 VALUES(102, 'rahul', '4-OCT-2002', 'm', 29100, 504);
+INSERT INTO employee69 VALUES(103, 'sayan', '2-NOV-1969', 'm', 19222, 502);
+INSERT INTO employee69 VALUES(104, 'taylor', '5-JAN-1999', 'f', 100000, 504);
+INSERT INTO employee69 VALUES(105, 'chompa', '10-DEC-1950', 'f', 6000, 504);
+
+INSERT INTO project69 VALUES(201, 'CHATGPT', 'mumbai', 504);
+INSERT INTO project69 VALUES(202, 'NOPRO', 'mumbai', 501);
+INSERT INTO project69 VALUES(203, 'XARA', 'kolkata', 502);
+INSERT INTO project69 VALUES(204, 'NICKGA', 'kolkata', 502);
+
+INSERT INTO manages69 VALUES(503, 102, '10-OCT-2020');
+INSERT INTO manages69 VALUES(504, 104, '14-NOV-2020');
+INSERT INTO manages69 VALUES(502, 102, '15-OCT-2021');
+INSERT INTO manages69 VALUES(501, 104, '16-NOV-2021');
+
+INSERT INTO workson69 VALUES(101, 202, 100);
+INSERT INTO workson69 VALUES(103, 204, 101);
+INSERT INTO workson69 VALUES(105, 201, 160);
+
+QUERIES :-
+
+1) Find ssn and employee name of all the employees who have salary greater than 25000.
+
+SQL> SELECT ssn, ename FROM employee69 WHERE sal > 25000;
+
+       SSN ENAME
+---------- --------------------
+       101 smith
+       102 rahul
+       104 taylor
+
+2) Find all the project names which are located at 'mumbai'
+
+SQL> SELECT pname FROM project69 WHERE ploc = 'mumbai';
+
+PNAME
+----------
+CHATGPT
+NOPRO
+
+
+3) Find all the employees who are working on the projects located at 'mumbai'
+
+SQL> SELECT e.ssn, e.ename FROM project69 p, employee69 e WHERE p.dno = e.dno AND p.ploc = 'mumbai';
+
+       SSN ENAME
+---------- --------------------
+       101 smith
+       102 rahul
+       104 taylor
+       105 chompa
+
+4) For every project located in 'kolkata' list the project number, the controlling department number and the department managers name.
+
+SQL> (SELECT e.ename, p.pno, p.dno FROM employee69 e, project69 p, manages69 m WHERE p.dno = m.dno AND e.ssn = m.ssn AND p.ploc = 'kolkata');
+
+ENAME                       PNO        DNO
+-------------------- ---------- ----------
+rahul                       203        502
+rahul                       204        502
+
+
+5) Retrieve the names of employees who work on all the projects controlled by department no 5.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ASSIGNMENT   1:---
+-------------------------------------------------------
+//TABLE CREATION--
+
+SQL> create table sailor451(sid number(5) primary key,sname varchar2(20),rating
+number(2),age number(5,2));
+
+Table created.
+
+SQL> create table boat451(bid number(5) primary key,bname varchar2(20),colour varchar2(10));
+
+Table created.
+
+SQL> create table reserves451(sid number(5) references sailor451(sid)on delete cascade,bid number(5) references boat451(bid)on delete cascade,day date,primary key(sid,bid,day));
+
+Table created.
+
+//QUERIES--
+
+    i> Find the names and ages of all sailors.
+        ---> SQL> select sname, age from sailor451;
+
+	SNAME                       AGE
+	--------------------            ----------
+	JKL                                36
+	KLM                            38.4
+	BOB                             46.2
+	IJK                                 34
+	ABC                             35.2
+	BCD                              32
+	CDE                             33.5
+	FGH                              51
+	GHI                               20
+	HIJ                                27
+
+   ii> Find all Sailors with rating above 7.
+        --->SQL> select sname,rating from sailor451 where rating>7;
+
+	SNAME                    RATING
+	--------------------           ----------
+	KLM                             9
+	BOB                              8
+	IJK                               10
+	CDE                              9
+
+  iii>Find the names of Sailors who have Reserves Boat no. 103.
+        ---> SQL> select distinct s.sname from sailor451 s,reserves451 r where r.bid=103 and s.sid=r.sid;
+
+	SNAME
+	--------------------
+	ABC
+	BCD
+	CDE
+
+   iv> Find the Names of Sailors who have Reserves the Red Boat. 
+        --->SQL> select distinct s.sname from sailor451 s,boat451 b,reserves451 r where colour='red' and r.bid=b.bid and s.sid=r.sid;
+
+	SNAME
+	--------------------
+	ABC
+	BCD
+	FGH
+	GHI
+
+    v> Find the Names of Sailors who have Reserves atleast 1 Boat.
+        ---> SQL> select distinct s.sname from sailor451 s,reserves451 r where s.sid=r.sid;
+
+	SNAME
+	--------------------
+	FGH	
+	HIJ
+	BCD
+	CDE
+	BOB
+	ABC
+	GHI
+    
+   vi> Compute Increments for the rating of persons who have sailed two  different boats on the same day.
+        --->SQL> select distinct s.sname,s.rating+1 as rating from sailor451 s,reserves451 r1,reserves451 r2 where s.sid=r1.sid and r1.day=r2.day and s.sid=r2.sid and r1.bid<>r2.bid;
+
+	SNAME                    RATING
+	--------------------           ----------
+	ABC                           6
+
+  vii> Find the Colours of boats Reserved by "CDE".
+        --->SQL> select distinct b.colour  from sailor451 s,boat451 b,reserves451 r where sname='CDE' and r.sid=s.sid and b.bid=r.bid;
+
+	COLOUR
+	----------
+	green
+
+  viii> Find the names of the sailor who have reserved both a red and a green boat.
+        --->SQL>select distinct s.sname from sailor451 s , boat451 b1 , boat451 b2 , reserves451 r1 , reserves451 r2 where s.sid=r1.sid and r1.bid=b1.bid and s.sid =r2.sid and r2.bid=b2.bid and b1.colour ='red' and b2.colour='green';
+
+	SNAME
+	--------------------
+	ABC
+	BCD
+
+ ix> Find the names of sailors who have reserved a red boat or a green boat.
+        --->SQL>select distinct s.sname from sailor451 s,boat451 b,reserves451 r where (b.colour='red' or b.colour='green') and s.sid=r.sid and b.bid=r.bid;
+
+	SNAME
+	--------------------
+	FGH
+	BCD
+	CDE
+	ABC
+	GHI
+
+  x>Find the sid of all sailors who have reserves red boats but not green boats.
+       --->SQL> (select distinct r1.sid from reserves451 r1,boat451 b1 where b1.colour='red' and r1.bid=b1.bid) minus(select distinct r2.sid from reserves451 r2,boat451 b2 where b2.colour='green' and r2.bid=b2.bid);
+
+	       SID
+	      ----------
+	         4
+	         5
+
+  xi>Find the names of sailors who have not reserved the red boat.
+       --->SQL> (select s1.sname from sailor451 s1,boat451 b1,reserves451 r1 where b1.bid=r1.bid and s1.sid=r1.sid) minus (select s2.sname from sailor451 s2,boat451 b2,reserves451 r2 where b2.bid=r2.bid and s2.sid=r2.sid and b2.colour='red');
+
+
+	SNAME
+	--------------------
+	BOB
+	CDE
+	HIJ
+
+ xii> Find sailors who's rating is better than some sailor called 'BCD'.
+       --->SQL> (select s2.sname,s2.sid from sailor451 s1,sailor451 s2 where s1.sname='BCD' and s1.rating < s2.rating and s1.sid <> s2.sid);
+
+	SNAME                       SID
+	--------------------             ----------
+	KLM                              10
+	BOB                               7
+	IJK                                  8
+	CDE                               3
+  
+xiii> Find the sailors with the highest rating.
+       --->SQL> select sid,sname from sailor451 where rating in(select max(rating) from sailor451);
+
+	      SID SNAME
+	----------  --------------------
+	         8    IJK
+
+xiv>Find the ages of sailors who's name begins and ends with 'b' and has atleast 3 charecters.
+      --->SQL> select age from sailor451 where sname like 'B_%B';
+
+xv>Find the names of sailors who have reserves all boats.
+     ---> SQL> select s.sname from sailor451 s where NOT EXISTS (( select b.bid from boat451 b) minus ( select r.bid from reserves451 r where r.sid=s.sid));
+
+	       AGE
+	      ----------
+	       46.2
+
+xvi>Find the name and age of the oldest sailor.
+     ---> SQL>select sname,age from sailor451 where age=(select max(age) from sailor451);
+
+	SNAME                       AGE
+	--------------------             ----------
+	FGH                               51
+ 
+xvii>Find the names of sailors who are the older than the oldest sailor with the rating of 10.
+     ---> SQL> select sname from sailor451 where age>(select max (age) from sailor451 where rating =10)and rating <> 10;
+
+	SNAME
+	--------------------
+	JKL
+	KLM
+	BOB
+	ABC
+	FGH
+
+xviii>Find the age of the youngest sailor who is eligible to vote(that is atleast 18 years of old) for each rating level which atleast 2 sailors.
+     --->SQL> select sid , sname , age from sailor451 where age in(select min(s.age) from sailor451 s where s.rating = rating and s.age >= 18 group by s.rating having 1< (select count(*) from sailor451 where s.rating = rating)) order by rating;
+
+       SID SNAME                       AGE
+----------   --------------------             ----------
+         2    BCD                               32
+         3    CDE                              33.5
+
+xix>Find the age of the youngest sailor who is eligible to vote(that is atleast 18 years of old) for each rating level which atleast 2  such sailors.
+     --->SQL>select avg(s.age) as average_age, s.rating from sailor451 s where s.age>=18 group by s.rating having 1<(select count(*) from sailor451 where s.rating=rating and age >= 18);
+
+AVERAGE_AGE     RATING
+       -----------                  ----------
+         34                            7
+      35.95                          9
+
+xx>Find those ratings for which the avg age of sailorsis the minimum overall ratings.
+     --->SQL> select temp.rating , temp.avgage from (select rating ,avg(age) as avgage from sailor451 group by rating) temp where temp.avgage = (select min(avgage) from (select avg(s.age) as avgage from sailor451 s group by s.rating));
+
+	    RATING     AVGAGE
+	     ----------           ----------
+	         3                     20
+
+INSERTION IN TABLES -------
+
+Table : Sailor451----
+
+SQL> insert into sailor451 values(1,'ABC',5,35.2);
+
+1 row created.
+
+SQL> insert into sailor451 values(2,'BCD',7,32);
+
+1 row created.
+
+SQL> insert into sailor451 values(3,'CDE',9,33.5);
+
+1 row created.
+
+SQL> insert into sailor451 values(4,'FGH',1,51);
+
+1 row created.
+
+SQL> insert into sailor451 values(5,'GHI',3,20);
+
+1 row created.
+
+SQL> insert into sailor451 values(6,'HIJ',0.3,27);
+
+1 row created.
+
+SQL> insert into sailor451 values(7,'BOB',8,46.2);
+
+1 row created.
+
+SQL> insert into sailor451 values(8,'IJK',10,34);
+
+1 row created.
+
+SQL> insert into sailor451 values(9,'JKL',7,36);
+
+1 row created.
+
+SQL> insert into sailor451 values(10,'KLM',9,38.4);
+
+1 row created.
+
+table : Boat451------
+
+SQL> insert into boat451 values(101,'zy','red');
+
+1 row created.
+
+SQL> insert into boat451 values(102,'yx','blue');
+
+1 row created.
+
+SQL> insert into boat451 values(103,'dc','green');
+
+1 row created.
+
+SQL> insert into boat451 values(104,'cb','black');
+
+1 row created.
+
+Table : Reserves451-------
+
+SQL> insert into reserves451 values(1,102,'8-jan-2023');
+
+1 row created.
+
+SQL> insert into reserves451 values(1,101,'23-APR-23');
+
+1 row created.
+
+SQL> insert into reserves451 values(2,103,'10-feb-2023');
+
+1 row created.
+
+SQL> insert into reserves451 values(1,104,'05-dec-2018');
+
+1 row created.
+
+SQL> insert into reserves451 values(1,101,'8-JAN-23');
+
+1 row created.
+
+SQL> insert into reserves451 values(3,103,'4-dec-2022');
+
+1 row created.
+
+SQL> insert into reserves451 values(3,103,'10-mar-2023');
+
+1 row created.
+
+SQL> insert into reserves451 values(2,101,'10-mar-2023');
+
+1 row created.
+
+SQL> insert into reserves451 values(1,103,'14-NOV-23');
+
+1 row created.
+
+SQL> insert into reserves451 values(4,101,'29-dec-21');
+
+1 row created.
+
+SQL> insert into reserves451 values(5,101,'01-apr-2019');
+
+1 row created.
+
+SQL> insert into reserves451 values(5,104,'19-mar-2021');
+
+1 row created.
+
+SQL> insert into reserves451 values(6,102,'05-jul-2018');
+
+1 row created.
+
+SQL> insert into reserves451 values(7,104,'30-nov-2020');
+
+1 row created.
+
+
+
